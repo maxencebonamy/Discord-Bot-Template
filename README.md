@@ -80,47 +80,39 @@ pnpm dev
 
 ⚠ All commands files, sub-commands files, groups folders and sub-command-group files should have the same name as defined in your `command-name.builder.ts`
 
----
-#### `command-name.builder.ts`
-Builder of our command
+
+`command-name.builder.ts`: Builder of our command (detailled below)
 | export         | type                     | required                     | description                                               |
 | :------------- | :----------------------- | :--------------------------- | :-------------------------------------------------------- |
 | `slashCommand` | `SlashCommandDefinition` | `true`                       | SlashCommandBuilder of our command                        |
 | `guilds`       | `GuildsCommand`          | `false`                      | If this is defined, command will only be on these servers |
 | `enableInDev`  | `EnableInDev`            | `false` *(default: `false`)* | If bot is launch in dev-mode, command will not be loaded  |
 
----
-#### `command-name.cmd.ts`
-Execution of our command
+
+`command-name.cmd.ts`: Execution of our command (detailled below)
 | export    | type             | required | description                                 |
 | :-------- | :--------------- | :------- | :------------------------------------------ |
 | `execute` | `CommandExecute` | `true`   | Will be executed when the command is called |
 
----
+`command-name.util.ts`: All utilities functions our command need
+
+`command-name.type.ts`: All types our command need
+
+#### Sub commands
 
 `SubCommands` are located in `[sub-commands]/` folder of our command
 
-#### `group-exemple/sub-cmd-name.cmd.ts`
-Execution of our sub-command group
+`group-exemple/sub-cmd-name.cmd.ts`: Execution of our sub-command group (detailled below)
 | export    | type             | required | description                                           |
 | :-------- | :--------------- | :------- | :---------------------------------------------------- |
 | `execute` | `CommandExecute` | `true`   | Will be executed when the sub command group is called |
 
-#### `sub-cmd-name.cmd.ts`
-Execution of our sub-command
+`sub-cmd-name.cmd.ts`: Execution of our sub-command (detailled below)
 | export    | type             | required | description                                     |
 | :-------- | :--------------- | :------- | :---------------------------------------------- |
 | `execute` | `CommandExecute` | `true`   | Will be executed when the sub command is called |
 
----
-#### `command-name.util.ts`
-All utilities functions our command need
 
----
-#### `command-name.type.ts`
-All types our command need
-
----
 
 ### Events auto-loading
 
@@ -131,25 +123,18 @@ All types our command need
 │       ├── 📄event-name.util.ts
 │       └── 📄event-name.type.ts
 ```
----
 
-#### `event-name.event.ts`
-Builder of our event
+`event-name.event.ts`: Builder of our event (detailled below)
 | export        | type           | required                     | description                                            |
 | :------------ | :------------- | :--------------------------- | :----------------------------------------------------- |
 | `event`       | `EventName`    | `true`                       | Name of our targeted event                             |
 | `execute`     | `EventExecute` | `true`                       | Will be executed when our event will be called         |
 | `enableInDev` | `EnableInDev`  | `false` *(default: `false`)* | If bot is launch in dev-mode, event will not be loaded |
 
----
-#### `event-name.util.ts`
-All utilities functions our event need
+`event-name.util.ts`: All utilities functions our event need
 
----
-#### `event-name.type.ts`
-All types our event need
+`event-name.type.ts`: All types our event need
 
----
 
 ### Tasks auto-loading
 
@@ -160,21 +145,15 @@ All types our event need
         ├── 📄task-name.util.ts
         └── 📄task-name.type.ts
 ```
----
-#### `task-name.task.ts`
-Builder of our event
+
+`task-name.task.ts`: Builder of our event (detailled below)
+
 | export        | type           | required                     | description                                                                                  |
 | :------------ | :------------- | :--------------------------- | :------------------------------------------------------------------------------------------- |
 | `interval`    | `TaskInterval` | `true`                       | Interval of our task *(write in cron syntaxe: "* * * * * *" => "sec min hour d month week")* |
 | `execute`     | `TaskExecute`  | `true`                       | Will be executed when our task will be on his interval                                       |
 | `enableInDev` | `EnableInDev`  | `false` *(default: `false`)* | If bot is launch in dev-mode, task will not be loaded                                        |
 
----
-#### `task-name.util.ts`
-All utilities functions our task need
+`task-name.util.ts`: All utilities functions our task need
 
----
-#### `task-name.type.ts`
-All types our task need
-
----
+`task-name.type.ts`: All types our task need
