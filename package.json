@@ -11,8 +11,8 @@
 		"ts:check": "tsc --noEmit",
 		"create:command": "ts-node ./scripts/create-command/create-command.ts",
 		"create:subcommand": "ts-node ./scripts/create-command/create-subcommand.ts",
-		"create:task": "ts-node ./scripts/create-task/create-task.ts",
-		"create:event": "ts-node ./scripts/create-event/create-event.ts"
+		"create:event": "ts-node ./scripts/create-event/create-event.ts",
+		"create:task": "ts-node ./scripts/create-task/create-task.ts"
 	},
 	"dependencies": {
 		"cron": "^3.0.0",

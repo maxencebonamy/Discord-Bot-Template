@@ -15,6 +15,10 @@ This is a template for a Discord Bot using the following stack:
 - Zod
 - Vitest
 
+#### Credits
+
+The auto-loader comes from [Royaume](https://github.com/Virtual-Royaume/Royaume-Discord-Bot).
+
 <br>
 
 <p align="center">
@@ -61,6 +65,27 @@ pnpm dev
 <p align="center">
 	<img src="https://github.com/maxencebonamy/maxencebonamy/blob/main/assets/3_Features.png" width="100%" alt="Features">
 </p>
+
+### Command generation
+
+```
+pnpm create:command <name>
+```
+```
+pnpm create:subcommand <commandName> <name>
+```
+
+### Event generation
+
+```
+pnpm create:event <name>
+```
+
+### Task generation
+
+```
+pnpm create:task <name>
+```
 
 ### Commands auto-loading
 
