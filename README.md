@@ -31,7 +31,6 @@ The auto-loader comes from [Royaume](https://github.com/Virtual-Royaume/Royaume-
 > *Prerequisites:*
 > - [x] *Git must be installed on your computer. If not, <a href="https://git-scm.com/downloads" target="_blank">click here</a>.*
 > - [x] *NodeJS must be installed on your computer, if not, <a href="https://nodejs.org/" target="_blank">click here</a>.*
-> - [x] *PNPM must be installed on your computer, if not, <a href="https://pnpm.io/installation" target="_blank">click here</a>.*
 <br>
 
 1. **Clone** the repository on your computer. To do this, open a terminal in the folder of your choice and run the following command:
@@ -46,7 +45,7 @@ cd Discord-Bot-Template
 
 3. **Install** the dependencies of the template:
 ```
-pnpm install
+npm install
 ```
 
 4. **Set** this environment variable in your .env file (you may need to create it):
@@ -56,7 +55,7 @@ BOT_TOKEN="your token"
 
 5. **Run** the local development server:
 ```
-pnpm dev
+npm run dev
 ```
 
 
@@ -69,22 +68,22 @@ pnpm dev
 ### Command generation
 
 ```
-pnpm create:command <name>
+npm run create:command <name>
 ```
 ```
-pnpm create:subcommand <commandName> <name>
+npm run create:subcommand <commandName> <name>
 ```
 
 ### Event generation
 
 ```
-pnpm create:event <name>
+npm run create:event <name>
 ```
 
 ### Task generation
 
 ```
-pnpm create:task <name>
+npm run create:task <name>
 ```
 
 ### Commands auto-loading
