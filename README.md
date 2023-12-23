@@ -73,7 +73,7 @@ pnpm dev
 │       ├── 📄command-name.util.ts
 │       ├── 📄command-name.type.ts
 │       └── 📂[sub-commands]/
-│           ├── 📂group-exemple/
+│           ├── 📂group-example/
 │           │   └── 📄sub-cmd-name.cmd.ts
 │           └── 📄sub-cmd-name.cmd.ts
 ```
