@@ -1,183 +1,166 @@
-<p align="center">
-	<img src="https://github.com/maxencebonamy/maxencebonamy/blob/main/assets/Discord_Bot_Template.png" width="100%" alt="Discord Bot Template">
-</p>
+# Discord Bot Template
 
-<br>
+A TypeScript starter for Discord bots, with automatic loading of commands, events and scheduled tasks.
 
-<p align="center">
-	<img src="https://github.com/maxencebonamy/maxencebonamy/blob/main/assets/1_Description.png" width="100%" alt="Description">
-</p>
+The template wraps discord.js with a folder-based loader and generator scripts. It targets developers who want a structured bot project without wiring commands, events and cron tasks by hand.
 
-This is a template for a Discord Bot using the following stack:
-- Discord.js (with TypeScript)
-- ESLint (using my own config)
-- Cron (with Day.js)
-- Zod
-- Vitest
+## Table of contents
 
-#### Credits
+- [Discord Bot Template](#discord-bot-template)
+	- [Table of contents](#table-of-contents)
+	- [How it works](#how-it-works)
+	- [Tech stack](#tech-stack)
+	- [Repository structure](#repository-structure)
+	- [Prerequisites](#prerequisites)
+	- [Installation](#installation)
+	- [Configuration](#configuration)
+	- [Running locally](#running-locally)
+	- [Useful scripts](#useful-scripts)
+	- [Tests and quality](#tests-and-quality)
+	- [Deployment](#deployment)
+	- [License](#license)
 
-The auto-loader comes from [Royaume](https://github.com/Virtual-Royaume/Royaume-Discord-Bot).
+## How it works
 
-<br>
+1. **Startup**: `src/client.ts` validates the environment with Zod, creates the discord.js client and logs in with `BOT_TOKEN`.
+2. **Events**: once the client is ready, every event file found in `src/events` is loaded and bound to its Discord event.
+3. **Tasks**: every task file found in `src/tasks` is loaded and scheduled with a cron expression (Day.js is configured for dates).
+4. **Commands**: command folders in `src/commands` are loaded, registered as application (`/`) commands, and dispatched when an interaction arrives. Commands can be limited to specific guilds.
+5. **Dev mode**: when the process is started with the `dev` argument, commands, events and tasks are loaded only if they set `enableInDev`.
+6. **Generation**: the `create:*` scripts create the files of a new command, subcommand, event or task from templates.
 
-<p align="center">
-	<img src="https://github.com/maxencebonamy/maxencebonamy/blob/main/assets/2_Get_Started.png" width="100%" alt="Get Started">
-</p>
+## Tech stack
 
-### Install the template
+| Layer | Technologies |
+| --- | --- |
+| Bot | Node.js, discord.js 14, TypeScript |
+| Scheduling | `cron`, Day.js |
+| Validation and errors | Zod, `rustic-error` |
+| Tooling | `@swc-node/register`, `ts-node`, nodemon, ESLint (`@maxencebonamy/eslint-config`), Vitest |
+| Deployment | Docker |
 
-> [!NOTE]
-> *Prerequisites:*
-> - [x] *Git must be installed on your computer. If not, <a href="https://git-scm.com/downloads" target="_blank">click here</a>.*
-> - [x] *NodeJS must be installed on your computer, if not, <a href="https://nodejs.org/" target="_blank">click here</a>.*
-<br>
+## Repository structure
 
-1. **Clone** the repository on your computer. To do this, open a terminal in the folder of your choice and run the following command:
 ```
-git clone https://github.com/maxencebonamy/Discord-Bot-Template
+.
+├── scripts/                 Generators for commands, subcommands, events and tasks
+│   ├── create-command/
+│   ├── create-subcommand/
+│   ├── create-event/
+│   ├── create-task/
+│   └── utils/
+├── src/
+│   ├── client.ts            Entry point
+│   ├── commands/            One folder per command
+│   ├── events/              One folder per event
+│   ├── tasks/               One folder per scheduled task
+│   ├── configs/             Environment, global, guild and Day.js configuration
+│   └── utils/               Loaders (commands, events, tasks), cron, Discord, logger, helpers
+├── Dockerfile
+├── tsconfig.json
+└── vitest.config.ts
 ```
 
-2. **Navigate** inside the folder you've just cloned with the following command:
+Commands, events and tasks follow a naming convention that the loaders rely on.
+
 ```
+src/
+├── commands/
+│   └── command-name/
+│       ├── command-name.builder.ts
+│       ├── command-name.cmd.ts
+│       ├── command-name.util.ts
+│       ├── command-name.type.ts
+│       └── [sub-commands]/
+│           ├── group-example/
+│           │   └── sub-cmd-name.cmd.ts
+│           └── sub-cmd-name.cmd.ts
+├── events/
+│   └── event-name/
+│       └── event-name.event.ts
+└── tasks/
+    └── task-name/
+        └── task-name.task.ts
+```
+
+File and folder names of commands, subcommands and subcommand groups must match the names defined in `command-name.builder.ts`. Subcommand groups are folders prefixed with `group-`.
+
+| File | Exports |
+| --- | --- |
+| `*.builder.ts` | `slashCommand` (required), `guilds`, `enableInDev` |
+| `*.cmd.ts` | `execute` |
+| `*.event.ts` | `event`, `execute`, `enableInDev` |
+| `*.task.ts` | `interval` (cron syntax with seconds: `sec min hour day month weekday`), `execute`, `enableInDev` |
+
+`enableInDev` defaults to `false`. The `@/` import alias points to `src/`. The auto-loader comes from [Royaume](https://github.com/Virtual-Royaume/Royaume-Discord-Bot).
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 18 or later (`engines` field; the Dockerfile uses Node 19)
+- [pnpm](https://pnpm.io/) 8 or later (`engines` field)
+- A Discord application with a bot token, created on the [developer portal](https://discord.com/developers/applications)
+
+## Installation
+
+```bash
+git clone git@github.com:maxencebonamy/Discord-Bot-Template.git
 cd Discord-Bot-Template
+pnpm install
 ```
 
-3. **Install** the dependencies of the template:
-```
-npm install
-```
+## Configuration
 
-4. **Set** this environment variable in your .env file (you may need to create it):
-```
-BOT_TOKEN="your token"
+The repository has no `.env.example`. Create a `.env` file at the root:
+
+```bash
+touch .env
 ```
 
-5. **Run** the local development server:
-```
-npm run dev
-```
+| Variable | Description | Example |
+| --- | --- | --- |
+| `BOT_TOKEN` | Discord bot token (required, non-empty) | `your-bot-token` |
 
+## Running locally
 
-<br>
-
-<p align="center">
-	<img src="https://github.com/maxencebonamy/maxencebonamy/blob/main/assets/3_Features.png" width="100%" alt="Features">
-</p>
-
-### Command generation
-
-```
-npm run create:command <name>
-```
-```
-npm run create:subcommand <commandName> <name>
+```bash
+pnpm dev
 ```
 
-### Event generation
+nodemon restarts the bot on every change. To run without file watching:
 
-```
-npm run create:event <name>
-```
-
-### Task generation
-
-```
-npm run create:task <name>
+```bash
+pnpm start
 ```
 
-### Commands auto-loading
+## Useful scripts
 
-```
-📂src/
-├── 📂commands/
-│   └── 📂command-name/
-│       ├── 📄command-name.builder.ts
-│       ├── 📄command-name.cmd.ts
-│       ├── 📄command-name.util.ts
-│       ├── 📄command-name.type.ts
-│       └── 📂[sub-commands]/
-│           ├── 📂group-example/
-│           │   └── 📄sub-cmd-name.cmd.ts
-│           └── 📄sub-cmd-name.cmd.ts
-```
+| Command | Effect |
+| --- | --- |
+| `pnpm dev` | Start the bot in dev mode with nodemon |
+| `pnpm start` | Start the bot |
+| `pnpm lint` | Lint `src` |
+| `pnpm lint:fix` | Lint `src` with auto-fix |
+| `pnpm test:unit` | Run Vitest with its UI |
+| `pnpm ts:check` | Type-check without emitting |
+| `pnpm create:command <name>` | Generate a command |
+| `pnpm create:subcommand <commandName> <name>` | Generate a subcommand |
+| `pnpm create:event <name>` | Generate an event |
+| `pnpm create:task <name>` | Generate a scheduled task |
 
-⚠ All commands files, sub-commands files, groups folders and sub-command-group files should have the same name as defined in your `command-name.builder.ts`
+## Tests and quality
 
-
-`command-name.builder.ts`: Builder of our command (detailled below)
-| export         | type                     | required                     | description                                               |
-| :------------- | :----------------------- | :--------------------------- | :-------------------------------------------------------- |
-| `slashCommand` | `SlashCommandDefinition` | `true`                       | SlashCommandBuilder of our command                        |
-| `guilds`       | `GuildsCommand`          | `false`                      | If this is defined, command will only be on these servers |
-| `enableInDev`  | `EnableInDev`            | `false` *(default: `false`)* | If bot is launch in dev-mode, command will not be loaded  |
-
-
-`command-name.cmd.ts`: Execution of our command (detailled below)
-| export    | type             | required | description                                 |
-| :-------- | :--------------- | :------- | :------------------------------------------ |
-| `execute` | `CommandExecute` | `true`   | Will be executed when the command is called |
-
-`command-name.util.ts`: All utilities functions our command need
-
-`command-name.type.ts`: All types our command need
-
-#### Sub commands
-
-`SubCommands` are located in `[sub-commands]/` folder of our command
-
-`group-exemple/sub-cmd-name.cmd.ts`: Execution of our sub-command group (detailled below)
-| export    | type             | required | description                                           |
-| :-------- | :--------------- | :------- | :---------------------------------------------------- |
-| `execute` | `CommandExecute` | `true`   | Will be executed when the sub command group is called |
-
-`sub-cmd-name.cmd.ts`: Execution of our sub-command (detailled below)
-| export    | type             | required | description                                     |
-| :-------- | :--------------- | :------- | :---------------------------------------------- |
-| `execute` | `CommandExecute` | `true`   | Will be executed when the sub command is called |
-
-
-
-### Events auto-loading
-
-```
-├── 📂events/
-│   └── 📂event-name/
-│       ├── 📄event-name.event.ts
-│       ├── 📄event-name.util.ts
-│       └── 📄event-name.type.ts
+```bash
+pnpm test:unit
+pnpm lint
+pnpm ts:check
 ```
 
-`event-name.event.ts`: Builder of our event (detailled below)
-| export        | type           | required                     | description                                            |
-| :------------ | :------------- | :--------------------------- | :----------------------------------------------------- |
-| `event`       | `EventName`    | `true`                       | Name of our targeted event                             |
-| `execute`     | `EventExecute` | `true`                       | Will be executed when our event will be called         |
-| `enableInDev` | `EnableInDev`  | `false` *(default: `false`)* | If bot is launch in dev-mode, event will not be loaded |
+Tests use Vitest and load `.env` through `dotenv/config`. Linting uses the shared ESLint config `@maxencebonamy/eslint-config`.
 
-`event-name.util.ts`: All utilities functions our event need
+## Deployment
 
-`event-name.type.ts`: All types our event need
+The repository has no CI. A [`Dockerfile`](Dockerfile) builds an image from `node:19`, installs dependencies with `npm install` and starts the bot with `npm run start`. Provide `BOT_TOKEN` to the container as an environment variable.
 
+## License
 
-### Tasks auto-loading
-
-```
-└── 📂tasks/
-    └── 📂task-name/
-        ├── 📄task-name.task.ts
-        ├── 📄task-name.util.ts
-        └── 📄task-name.type.ts
-```
-
-`task-name.task.ts`: Builder of our event (detailled below)
-
-| export        | type           | required                     | description                                                                                  |
-| :------------ | :------------- | :--------------------------- | :------------------------------------------------------------------------------------------- |
-| `interval`    | `TaskInterval` | `true`                       | Interval of our task *(write in cron syntaxe: "* * * * * *" => "sec min hour d month week")* |
-| `execute`     | `TaskExecute`  | `true`                       | Will be executed when our task will be on his interval                                       |
-| `enableInDev` | `EnableInDev`  | `false` *(default: `false`)* | If bot is launch in dev-mode, task will not be loaded                                        |
-
-`task-name.util.ts`: All utilities functions our task need
-
-`task-name.type.ts`: All types our task need
+This project is licensed under the [MIT License](LICENSE).
